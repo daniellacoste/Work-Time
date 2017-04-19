@@ -1,10 +1,9 @@
 {
-  "name": "timesheet",
+  "name": "Work Time",
   "version": "0.0.1",
-  "description": "Employee Timesheet",
+  "description": "A web-based application for tracking time at work.",
   "dependencies": {
-    "express": "^4.14.1",
-    "socket.io": "^1.7.3"
+    "express": "^4.14.1"
   },
   "scripts": {
     "start": "node index.js"
