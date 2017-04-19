@@ -1,9 +1,5 @@
-# Employee-Time-Tracker :clock2:
-Final project for SENG 513.
+# Work Time :clock2:
 
-This web-app makes it easy to track your hours worked, vacation time remaining, and send messages to employees.
+This web application is used as timesheet software to track your time at work.
 
-## How to Launch
-
-1. `npm install express`
-2. ` node index.js`, from the project directory.
+__Originally developed as a final project for SENG 513, W2017.__
