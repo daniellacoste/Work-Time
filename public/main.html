@@ -29,17 +29,13 @@
     <div id="employeeSidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeSideMenu()">&times;</a>
       <ul class="list-group" id="employeeList" ></ul>
-         
     </div>
-
     <div id="projectSidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeSideMenu()">&times;</a>
       <ul class="list-group" id="projectList" ></ul>
-        
     </div>
 
-
-      <div id="main" >
+    <div id="main" >
       <!-- Modal -->
       <div class="modal fade" id="VacationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -57,16 +53,15 @@
                   <select class="form-control" id="vacation_employee" onchange="updateVacDays()"></select>
                 </div>
                 <label for="vac_toggle">Vacation Days:</label>
-                      <div class="input-group number-spinner" id="vac_toggle">
-				<span class="input-group-btn">
-					<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>
-				</span>
-                        <input type="text" class="form-control text-center" id="vac_days" value="1">
-                        <span class="input-group-btn">
-					<button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>
-				</span>
-                      </div>
-
+                <div class="input-group number-spinner" id="vac_toggle">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>
+                  </span>
+                  <input type="text" class="form-control text-center" id="vac_days" value="1">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>
+                  </span>
+                </div>
               </form>
             </div>
             <div class="modal-footer">
@@ -126,12 +121,10 @@
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
-    
 
-    <!-- Use any element to open the sidenav -->
-    <!--  <span onclick="openNav()">open</span> -->
+      <!-- Use any element to open the sidenav -->
+      <!--  <span onclick="openNav()">open</span> -->
 
-    
       <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">

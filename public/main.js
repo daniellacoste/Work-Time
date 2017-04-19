@@ -19,7 +19,6 @@ const showUser = document.getElementById('userEmail');
 const navbar = document.getElementById('navbar');
 const employeesBtn = document.getElementById('employeesBtn');
 const projectsBtn = document.getElementById('projectsBtn');
-
 const projectManagementBtn = document.getElementById('projectManagementBtn');
 const sendBtn = document.getElementById('sendBtn');
 const NotificationsBtn = document.getElementById('NotificationsBtn');
@@ -103,18 +102,17 @@ firebase.auth().onAuthStateChanged(user => {
           else{
             totalOther=totalOther+duration;
           }
-            
+
         }
-          // note: currently counts all vacation you've EVER taken.
+        // note: currently counts all vacation you've EVER taken.
         if (type == '4'){
-                totalVacation = totalVacation - duration/8;
-                vacation.update(parseInt(totalVacation));
+          totalVacation = totalVacation - duration/8;
+          vacation.update(parseInt(totalVacation));
         }
       });
       scheduler.firebase(dbEvents); // Set events to the scheduler
       hours.update(totalHours);
       hoursByType.update([totalOther,totalMeeting,totalDev]);
-
     });
 
     // Display navbar if the user is a Manager
@@ -165,7 +163,6 @@ btnLogOut.addEventListener('click', e => {
 employeesBtn.addEventListener('click', e => {
   //close other sidemenus
   document.getElementById("projectSidenav").style.width = "0";
-
   // Displays a container with all employees in the database
   document.getElementById("employeeSidenav").style.width = "250px";
   // Loop through "Employee" to get data of every Employee in the data base
@@ -175,49 +172,45 @@ employeesBtn.addEventListener('click', e => {
   .then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       // key will be "ada" the first time and "alan" the second time
-     var key = childSnapshot.key;
-     var childData = childSnapshot.val();
-     let totalHours = 0;
-	 let totalDev = 0;
-	 let totalMeeting = 0;
-	 let totalOther = 0;
-	 var today = new Date();
-	 var mondayOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()+1).valueOf();
-	 var sundayOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()+8).valueOf()-1;
+      var key = childSnapshot.key;
+      var childData = childSnapshot.val();
+      let totalHours = 0;
+      let totalDev = 0;
+      let totalMeeting = 0;
+      let totalOther = 0;
+      var today = new Date();
+      var mondayOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()+1).valueOf();
+      var sundayOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()+8).valueOf()-1;
 
-     let dbEvents = database.ref().child('Events/'+key);
-	 // Read the Events from Firebase
-     dbEvents.on('value', snapshot => {
-	 //console.log(snapshot.val());
-	 
-	 snapshot.forEach(function (childSnapshot) {
-	 var key = childSnapshot.key;
+      let dbEvents = database.ref().child('Events/'+key);
+      // Read the Events from Firebase
+      dbEvents.on('value', snapshot => {
+        //console.log(snapshot.val());
+        snapshot.forEach(function (childSnapshot) {
+          var key = childSnapshot.key;
+          let start = childSnapshot.child("start_date").val();
+          let end = childSnapshot.child("end_date").val();
+          let duration = (end-start)/(1000*60*60);
+          let type = childSnapshot.child("type").val();
 
-	 let start = childSnapshot.child("start_date").val();
-	 let end = childSnapshot.child("end_date").val();
-	 let duration = (end-start)/(1000*60*60);
-	 let type = childSnapshot.child("type").val();
+          //console.log(duration);
+          if (start >= mondayOfWeek && start <= sundayOfWeek){
+            totalHours = totalHours + duration;
+            if (type === '1'){
+              totalDev = totalDev+duration;
+            }
+            else if (type == '2'){
+              totalMeeting = totalMeeting+duration;
+            }
+            else{
+              totalOther=totalOther+duration;
+            }
+          }
+        });
+      });
 
-	 //console.log(duration);
-	 if (start >= mondayOfWeek && start <= sundayOfWeek){
-	  totalHours = totalHours + duration;
-	  if (type === '1'){
-		totalDev = totalDev+duration;
-	  }
-	  else if (type == '2'){
-		totalMeeting = totalMeeting+duration;
-	  }
-	  else{
-		totalOther=totalOther+duration;
-	  }
-	 }
-         
-	 });
-	 
-	 });
-  
       if(!currentEmployeeList.includes(key)) 
-        {
+      {
         currentEmployeeList.push(key);
         var list = document.getElementById('employeeList');
         var entry = document.createElement('li');
@@ -226,10 +219,10 @@ employeesBtn.addEventListener('click', e => {
         entry.appendChild(document.createTextNode(childData["firstName"] +" " +childData["lastName"] + "\n ("+ totalHours.toFixed(1) +" hours worked)"));
         list.appendChild(entry);
         document.getElementById("employee"+key).innerText = childData["firstName"] +" " +childData["lastName"] + "\n ("+ totalHours.toFixed(1) +" hours worked)";
-        }
-     else{    
+      }
+      else{    
         document.getElementById("employee"+key).innerText = childData["firstName"] +" " +childData["lastName"] + "\n ("+ totalHours.toFixed(1) +" hours worked)";
-        }
+      }
     });
   });
 });
@@ -237,12 +230,8 @@ employeesBtn.addEventListener('click', e => {
 // Navbar projects
 projectsBtn.addEventListener('click', e => {
   //close other sidemenu opens
-  
   document.getElementById("employeeSidenav").style.width = "0";
-
- 
-    
-    //open project side menu
+  //open project side menu
   document.getElementById("projectSidenav").style.width = "250px";
   var index = 1;
   var query = firebase.database().ref("Project/");
@@ -252,154 +241,119 @@ projectsBtn.addEventListener('click', e => {
       // key will be "ada" the first time and "alan" the second time
       var key = childSnapshot.key;
       var childData = childSnapshot.val();
-        if(!projectList.includes(key)) 
-        {
-        projectList.push(key);
-        var list = document.getElementById('projectList');
-        var entry = document.createElement('li');
-        entry.setAttribute("id","project"+key);
-        entry.setAttribute("class","list-group");
-        entry.appendChild(document.createTextNode(childData));
-        list.appendChild(entry);
-     
-        }
-     else{    
+      if(!projectList.includes(key)) 
+    {
+      projectList.push(key);
+      var list = document.getElementById('projectList');
+      var entry = document.createElement('li');
+      entry.setAttribute("id","project"+key);
+      entry.setAttribute("class","list-group");
+      entry.appendChild(document.createTextNode(childData));
+      list.appendChild(entry);
+    }
+      else{    
         document.getElementById("project"+key).innerText = childData;
-        }
+      }
     });
   });
-
 });
 
-// Navbar approvals
-
-
-// Navbar Setting
-/*settingsBtn.addEventListener('click', e => {
-  //close other sidemnu open
-  document.getElementById("employeeSidenav").style.width = "0";
-  document.getElementById("projectSidenav").style.width = "0";
-  document.getElementById("approvalSidenav").style.width = "0";
-
-  //open settings side menu
-  document.getElementById("settingSidenav").style.width = "250px";
-  document.getElementById("1").innerText = "Delete user";
-  document.getElementById("2").innerText = "Add User";
-  document.getElementById("3").innerText = "Add Project";
-});
-*/
 function closeSideMenu() {
   document.getElementById("employeeSidenav").style.width = "0";
   document.getElementById("projectSidenav").style.width = "0";
-
 }
 
-
 VacationManagement.addEventListener('click', e => {
-
-    var query = firebase.database().ref("Employee/").orderByKey();
-    query.once("value")
-        .then(function(snapshot) {
-            html = '<option></option>';
-            snapshot.forEach(function(childSnapshot) {
-                // key will be "ada" the first time and "alan" the second time
-                var key = childSnapshot.key;
-                var childData = childSnapshot.val();
-                let employee_first = childData["firstName"];
-                let employee_last = childData["lastName"];
-                let type = childData["type"];
-                if (type != "Manager"){
-                    html += "<option>" + employee_first + " " + employee_last + "</option>";
-                }
-
-            });
-            document.getElementById('vacation_employee').innerHTML = html;
-        });
-
-
-    $('#VacationModal').appendTo("body");
-
-
-
-
+  var query = firebase.database().ref("Employee/").orderByKey();
+  query.once("value")
+  .then(function(snapshot) {
+    html = '<option></option>';
+    snapshot.forEach(function(childSnapshot) {
+      // key will be "ada" the first time and "alan" the second time
+      var key = childSnapshot.key;
+      var childData = childSnapshot.val();
+      let employee_first = childData["firstName"];
+      let employee_last = childData["lastName"];
+      let type = childData["type"];
+      if (type != "Manager"){
+        html += "<option>" + employee_first + " " + employee_last + "</option>";
+      }
+    });
+    document.getElementById('vacation_employee').innerHTML = html;
+  });
+$('#VacationModal').appendTo("body");
 });
 
 function updateVacDays() {
-    let a = document.getElementById("vacation_employee");
-    let recipient = a.options[a.selectedIndex].value;
-    let days=0;
-    var query = firebase.database().ref("Employee/").orderByKey();
-    query.once("value")
-        .then(function(snapshot) {
-            snapshot.forEach(function(childSnapshot) {
-                // key will be "ada" the first time and "alan" the second time
-                var key = childSnapshot.key;
-                var childData = childSnapshot.val();
-                let employee_first = childData["firstName"];
-                let employee_last = childData["lastName"];
+  let a = document.getElementById("vacation_employee");
+  let recipient = a.options[a.selectedIndex].value;
+  let days=0;
+  var query = firebase.database().ref("Employee/").orderByKey();
+  query.once("value")
+    .then(function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        // key will be "ada" the first time and "alan" the second time
+        var key = childSnapshot.key;
+        var childData = childSnapshot.val();
+        let employee_first = childData["firstName"];
+        let employee_last = childData["lastName"];
+        let full = employee_first+" "+employee_last;
 
-                let full = employee_first+" "+employee_last;
-                if (full === recipient){
-                    firebase.database().ref("Employee/"+key+"/vacation").on('value',function (snapshot) {
-                      console.log(snapshot.val());
-                      document.getElementById("vac_days").value = snapshot.val().toString();
-
-                    });
-
-
-                }
-            });
-
-        });
+        if (full === recipient){
+          firebase.database().ref("Employee/"+key+"/vacation").on('value',function (snapshot) {
+            console.log(snapshot.val());
+            document.getElementById("vac_days").value = snapshot.val().toString();
+          });
+        }
+      });
+    });
 }
 
 setVacation.addEventListener('click', e => {
-    let a = document.getElementById("vacation_employee");
-    let recipient = a.options[a.selectedIndex].value;
-    days = document.getElementById("vac_days").value;
-        if(a.selectedIndex>0) {
-            //get uid of the recipient
-            var query = firebase.database().ref("Employee/").orderByKey();
-            query.once("value")
-                .then(function (snapshot) {
-                    snapshot.forEach(function (childSnapshot) {
-                        // key will be "ada" the first time and "alan" the second time
-                        var key = childSnapshot.key;
-                        var childData = childSnapshot.val();
-                        let employee_first = childData["firstName"];
-                        let employee_last = childData["lastName"];
-                        let full = employee_first + " " + employee_last;
-                        if (full === recipient) {
-                            firebase.database().ref("Employee/" + key + "/vacation").set(days);
-                        }
-                    });
-
-                });
-
-        }
-    document.getElementById("vac_days").value = "0";
-    $('#VacationModal').modal('hide');
+  let a = document.getElementById("vacation_employee");
+  let recipient = a.options[a.selectedIndex].value;
+  days = document.getElementById("vac_days").value;
+  if(a.selectedIndex>0) {
+    //get uid of the recipient
+    var query = firebase.database().ref("Employee/").orderByKey();
+    query.once("value")
+  .then(function (snapshot) {
+    snapshot.forEach(function (childSnapshot) {
+      // key will be "ada" the first time and "alan" the second time
+      var key = childSnapshot.key;
+      var childData = childSnapshot.val();
+      let employee_first = childData["firstName"];
+      let employee_last = childData["lastName"];
+      let full = employee_first + " " + employee_last;
+      if (full === recipient) {
+        firebase.database().ref("Employee/" + key + "/vacation").set(days);
+      }
+    });
+  });
+  }
+  document.getElementById("vac_days").value = "0";
+  $('#VacationModal').modal('hide');
 });
 
 $(document).on('click', '.number-spinner button', function () {
-    var btn = $(this),
-        oldValue = btn.closest('.number-spinner').find('input').val().trim(),
-        newVal = 0;
+  var btn = $(this),
+  oldValue = btn.closest('.number-spinner').find('input').val().trim(),
+  newVal = 0;
 
-    if (btn.attr('data-dir') == 'up') {
-        newVal = parseInt(oldValue) + 1;
-    } else {
-        if (oldValue > 0) {
-            newVal = parseInt(oldValue) - 1;
-        } else {
-            newVal = 0;
-        }
-    }
-    btn.closest('.number-spinner').find('input').val(newVal);
+if (btn.attr('data-dir') == 'up') {
+  newVal = parseInt(oldValue) + 1;
+} else {
+  if (oldValue > 0) {
+    newVal = parseInt(oldValue) - 1;
+  } else {
+    newVal = 0;
+  }
+}
+btn.closest('.number-spinner').find('input').val(newVal);
 });
 
 projectManagementBtn.addEventListener('click', e => {
-    $('#noteModal').modal('hide');
+  $('#noteModal').modal('hide');
   var query = firebase.database().ref("Employee/").orderByKey();
   query.once("value")
   .then(function(snapshot) {
@@ -420,35 +374,31 @@ projectManagementBtn.addEventListener('click', e => {
 $('#NotificationsModal').appendTo("body");
 });
 
-
-
-
-
 sendBtn.addEventListener('click', e => {
   let a = document.getElementById("recipient");
   let recipient = a.options[a.selectedIndex].value;
   msg = document.getElementById("message-text").value;
   if(msg.length > 0 && a.selectedIndex > 0){
-  //get uid of the recipient
-  var query = firebase.database().ref("Employee/").orderByKey();
-  query.once("value")
-    .then(function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-          // key will be "ada" the first time and "alan" the second time
-          var key = childSnapshot.key;
-          var childData = childSnapshot.val();
-          let employee_first = childData["firstName"];
-          let employee_last = childData["lastName"];
-          let full = employee_first+" "+employee_last;
-          if (full === recipient){
-            firebase.database().ref("Notification/"+key).push(msg);
-          }
-        });
+    //get uid of the recipient
+    var query = firebase.database().ref("Employee/").orderByKey();
+    query.once("value")
+  .then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      // key will be "ada" the first time and "alan" the second time
+      var key = childSnapshot.key;
+      var childData = childSnapshot.val();
+      let employee_first = childData["firstName"];
+      let employee_last = childData["lastName"];
+      let full = employee_first+" "+employee_last;
+      if (full === recipient){
+        firebase.database().ref("Notification/"+key).push(msg);
+      }
+    });
   });
   }
 
-document.getElementById("message-text").value = "";
-$('#NotificationsModal').modal('hide');
+  document.getElementById("message-text").value = "";
+  $('#NotificationsModal').modal('hide');
 });
 
 addProjectBtn.addEventListener('click', e => {
@@ -465,60 +415,48 @@ saveProject.addEventListener('click', e => {
   $('#AddProjectModal').modal('hide');
 });
 
-// function closeProject() {
-//   document.getElementById("projectSidenav").style.width = "0";
-// }
-//
-// function closeApproval() {
-//   document.getElementById("approvalSidenav").style.width = "0";
-// }
-//
-// function closeSetting() {
-//   document.getElementById("settingSidenav").style.width = "0";
-// }
-
 var hours = new RadialProgressChart('.hours', {
   diameter: 100,
-  stroke:{
-    width: 20,
+    stroke:{
+      width: 20,
     gap: 2
-  },
-  max: 40,
-  round: false,
-  series: [{
-    value: 0,
+    },
+    max: 40,
+    round: false,
+    series: [{
+      value: 0,
     color: ['red','#7CFC00']
-  }],
-  center: function(d) {
-            return d.toFixed(2) + ' HOURS'
-          }
+    }],
+    center: function(d) {
+              return d.toFixed(2) + ' HOURS'
+            }
 });
 
 var vacation = new RadialProgressChart('.vacation', {
   diameter: 100,
-  stroke:{
-    width: 20,
+    stroke:{
+      width: 20,
     gap: 2
-  },
-  max: 25,
-  round: false,
-  series: [{
-    value: 0,
+    },
+    max: 25,
+    round: false,
+    series: [{
+      value: 0,
     color: ['#82CAFF', '#151B54']
-  }],
-  center: function(d) {
-            return d.toFixed(1) + ' DAYS'
-          }
+    }],
+    center: function(d) {
+              return d.toFixed(1) + ' DAYS'
+            }
 });
 
 var hoursByType = new RadialProgressChart('.hours_by_type', {
   diameter: 130,
-  max: 40,
-  series: [
-    {labelStart: '\uF106', value: 15, color: ['#43C6DB','#2B65EC']},
-    {labelStart: '\uF101', value: 35, color: ['#79F7CF', '#41A317']},
-    {labelStart: '\uF105', value: 20, color: ['#F778A1', '#F70D1A']}
-  ]
+    max: 40,
+    series: [
+{labelStart: '\uF106', value: 15, color: ['#43C6DB','#2B65EC']},
+{labelStart: '\uF101', value: 35, color: ['#79F7CF', '#41A317']},
+{labelStart: '\uF105', value: 20, color: ['#F778A1', '#F70D1A']}
+]
 });
 
 function getProjects() {

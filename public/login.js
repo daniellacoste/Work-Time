@@ -79,16 +79,8 @@ btnSubmit.addEventListener('click', e => {
   const lastName = txtLastName.value;
   const type = typeSelect.value;
   var vacation = 0;
-
   var fields = [email, password, confirmPassword, firstName, lastName];
 
-  if (type == "Manager"){
-      vacation = 25;
-  }
-  else{
-        vacation = 10;
-  }
-    
   if (areNull(fields)) {
     alertMsg.innerHTML = "<strong>Stop!</strong> One or more of your fields are empty.";
     $('#loginAlert').show();
@@ -127,7 +119,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
     console.log(s);
     window.location.href = "main.html";
   } else {
-      console.log(firebaseUser);
+    console.log(firebaseUser);
   }
 });
 
@@ -145,7 +137,7 @@ formGroup.addEventListener('keypress', e => {
     else {
       btnSubmit.click();
     }
-	}
+  }
 });
 
 // Check if any fields are empty
